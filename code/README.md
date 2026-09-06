@@ -6,23 +6,24 @@
 
 | 目录/文件 | 说明 | 对应笔记 |
 |-----------|------|----------|
-| `01-helloworld/` | 第一个 DDS 发布/订阅示例 | notes/02-通信协议/ |
-| `02-read-state/` | 读取机器人状态 | notes/03-底层控制/02-读取机器人状态.md |
-| `03-single-motor/` | 单个电机位置控制 | notes/03-底层控制/03-单个电机位置控制.md |
+| `01-arm-control/arm_state_monitor.cpp` | H1-2 手臂与腰部 15 关节只读状态监视器 | `notes/05-手臂控制/02-只读手臂状态监视器.md` |
+
+后续目录按抓取任务路线逐步增加，不保留尚未实现的占位代码目录。
 
 ## 编译方法
 
-每个子目录都有自己的 CMakeLists.txt，编译方式：
+每个子目录使用独立 `CMakeLists.txt`。当前手臂控制示例需要显式指定本机 `unitree_sdk2` 源码目录：
 
 ```bash
-cd 01-helloworld
-mkdir build && cd build
-cmake ..
-make
+cd ~/h1-2-learning
+cmake -S code/01-arm-control \
+      -B code/01-arm-control/build \
+      -DUNITREE_SDK2_ROOT=/home/yingdongp/unitree_sdk2
+cmake --build code/01-arm-control/build --target arm_state_monitor
 ```
 
 ## ⚠️ 安全提醒
 
-- 涉及实机控制的代码，**先在仿真或挂吊绳状态下测试**
-- 底层控制代码运行前，确认急停按钮位置
-- 不确定的参数值，先问再跑
+- 运行只读程序前，仍需核对可执行文件和源码中不存在 Publisher/`Write()`。
+- 任何运动代码必须先通过离线轨迹、限位和碰撞检查，并建立本次动作的测试卡。
+- 实机运动测试前确认吊绳、实体急停、遥控器和人员隔离区，不用软件停止代替实体急停。
