@@ -193,6 +193,8 @@ client.SetTimeout(10.f);
 
 ### 7.3 为什么重要？—— 操作顺序必须正确
 
+下面只表示原例程中状态转换的概念关系，不是当前项目的实机测试步骤：
+
 ```
 damp（松劲）→ stand_up（站起来）→ start（进入行走）→ move（走路）
 ```
@@ -201,7 +203,9 @@ damp（松劲）→ stand_up（站起来）→ start（进入行走）→ move�
 
 ---
 
-## 8. 实际运行方法
+## 8. 命令格式示例（当前不得作为实机测试步骤）
+
+> 下列命令用于说明 LocoClient 的调用格式，会改变机器人状态或产生运动。它们不是当前抓取项目的实机测试流程，未经独立动作测试卡审查不得执行。
 
 编译产物在 `build/bin/` 目录。
 
@@ -223,11 +227,11 @@ ifconfig
 ./h1_loco_client_example --network_interface=enp3s0 --stop_move
 ```
 
-### ⚠️ 安全提醒
+### ⚠️ 当前限制
 
-- 第一次接实机**务必挂吊绳**
-- 先从 `damp`、`get_fsm_id` 这种**只读/安全**命令开始，确认通信正常
-- 再碰 `stand_up`、`move` 等动作命令
+- `get_fsm_id` 是查询；`damp` 会改变机器人状态，不是只读命令。
+- `stand_up`、`start`、`set_velocity`、`stop_move` 都不属于首次通信测试。
+- 任何动作必须先确认吊绳、实体急停、遥控器和隔离区，并使用与抓取任务直接相关的独立测试卡。
 - `zero_torque` 会让电机完全释放，机器人可能直接瘫倒，慎用！
 
 ---
@@ -247,9 +251,10 @@ ifconfig
 ## 10. 下一步
 
 - [ ] 接实机测试 `get_fsm_id`（挂吊绳，确认通信）
-- [ ] 测试 `damp` → `stand_up` → `start` → `move` 完整流程
-- [ ] 学习 `LocoClient` 的头文件 `h1_loco_client.hpp`，了解所有可用方法
-- [ ] 读手臂控制例程 `h1_2_arm_sdk_dds_example.cpp`
+- [x] 学习 `LocoClient` 的头文件 `h1_loco_client.hpp`，了解所有可用方法
+- [x] 读手臂控制例程 `h1_2_arm_sdk_dds_example.cpp`
+- [x] 编写只订阅 `rt/lowstate` 的 `arm_state_monitor`
+- [ ] 按独立只读测试卡验证状态通信；不在本阶段执行站立、行走或手臂动作
 
 ---
 
